@@ -6,6 +6,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -193,12 +194,9 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Config> {
      * @param name 추출할 쿠키의 이름 (예: "access_token")
      * @return Optional<String> 형태로 추출된 쿠키 값 (없으면 empty)
      */
-    private Optional<String> getCookieValue(ServerHttpRequest request,
-                                            String name) {
-        return request.getCookies().get(name).stream()
-                .filter(cookie -> name.equals(cookie.getName()))
-                .map(org.springframework.http.HttpCookie::getValue)
-                .findFirst();
+    private Optional<String> getCookieValue(ServerHttpRequest request, String name) {
+        HttpCookie cookie = request.getCookies().getFirst(name);
+        return Optional.ofNullable(cookie).map(HttpCookie::getValue);
     }
 
     /**
