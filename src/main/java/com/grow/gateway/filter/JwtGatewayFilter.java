@@ -150,7 +150,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Config> {
                 .secure(true)
                 .path("/")
                 .maxAge(accessMaxAge)
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
         ResponseCookie rCookie = ResponseCookie
@@ -159,7 +159,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Config> {
                 .secure(true)
                 .path("/")
                 .maxAge(refreshMaxAge)
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
         response.getHeaders().add(HttpHeaders.SET_COOKIE, aCookie.toString());
