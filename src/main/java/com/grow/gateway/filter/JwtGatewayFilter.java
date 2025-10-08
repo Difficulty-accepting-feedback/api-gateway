@@ -58,8 +58,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Config> {
      * @param tokenProvider JWT 토큰 처리 로직을 제공하는 객체
      * @param props JWT 설정 값을 담은 프로퍼티 객체
      */
-    public JwtGatewayFilter(JwtTokenProvider tokenProvider,
-        JwtProperties props) {
+    public JwtGatewayFilter(JwtTokenProvider tokenProvider, JwtProperties props) {
         super(Config.class);
         this.tokenProvider = tokenProvider;
         this.props = props;
