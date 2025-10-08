@@ -76,4 +76,4 @@ jobs:
           script: |
             docker image prune -a -f 
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/grow-api-gateway:latest
-            kubectl apply -f deployment.yaml
+            kubectl rollout restart deployment api-gateway-deployment
