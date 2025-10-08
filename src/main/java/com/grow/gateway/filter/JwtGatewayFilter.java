@@ -59,7 +59,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Config> {
      * @param props JWT 설정 값을 담은 프로퍼티 객체
      */
     public JwtGatewayFilter(JwtTokenProvider tokenProvider,
-                            JwtProperties props) {
+        JwtProperties props) {
         super(Config.class);
         this.tokenProvider = tokenProvider;
         this.props = props;
@@ -145,22 +145,24 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Config> {
         long refreshMaxAge = props.getRefreshTokenExpiryDuration().getSeconds();
 
         ResponseCookie aCookie = ResponseCookie
-                .from("access_token", newAccess)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(accessMaxAge)
-                .sameSite("None")
-                .build();
+            .from("access_token", newAccess)
+            .httpOnly(true)
+            .secure(true)
+            .domain(".groow.store")
+            .path("/")
+            .maxAge(accessMaxAge)
+            .sameSite("None")
+            .build();
 
         ResponseCookie rCookie = ResponseCookie
-                .from("refresh_token", newRefresh)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(refreshMaxAge)
-                .sameSite("None")
-                .build();
+            .from("refresh_token", newRefresh)
+            .httpOnly(true)
+            .secure(true)
+            .domain(".groow.store")
+            .path("/")
+            .maxAge(refreshMaxAge)
+            .sameSite("None")
+            .build();
 
         response.getHeaders().add(HttpHeaders.SET_COOKIE, aCookie.toString());
         response.getHeaders().add(HttpHeaders.SET_COOKIE, rCookie.toString());
@@ -179,10 +181,10 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Config> {
      */
     private ServerWebExchange addMemberIdInHeader(ServerWebExchange exchange, ServerHttpRequest request, Long memberId) {
         return exchange.mutate()
-                .request(request.mutate()
-                        .header("X-Authorization-Id", memberId.toString())
-                        .build())
-                .build();
+            .request(request.mutate()
+                .header("X-Authorization-Id", memberId.toString())
+                .build())
+            .build();
     }
 
     /**
@@ -210,7 +212,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Config> {
      * @return Mono<Void> 형태로 응답 쓰기 완료를 나타냄
      */
     private Mono<Void> unauthorizedResponse(ServerHttpResponse response,
-                                            String message) {
+        String message) {
         response.setStatusCode(org.springframework.http.HttpStatus.UNAUTHORIZED);
         response.getHeaders().add(HttpHeaders.CONTENT_TYPE, "application/json");
         byte[] bytes = ("{\"error\": \"" + message + "\"}").getBytes();
