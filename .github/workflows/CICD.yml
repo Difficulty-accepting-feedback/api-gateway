@@ -76,4 +76,5 @@ jobs:
           script: |
             docker image prune -a -f 
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/grow-api-gateway:latest
+            kubectl set env deployment/api-gateway-deployment SPRING_PROFILES_ACTIVE=server
             kubectl rollout restart deployment api-gateway-deployment
