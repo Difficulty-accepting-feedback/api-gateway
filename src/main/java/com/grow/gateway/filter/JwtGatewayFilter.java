@@ -142,12 +142,13 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Config> {
     private void setNewAccessToken(String newAccess, String newRefresh, ServerHttpResponse response) {
         long accessMaxAge = props.getAccessTokenExpiryDuration().getSeconds();
         long refreshMaxAge = props.getRefreshTokenExpiryDuration().getSeconds();
+        String domain = props.getCookieDomain();
 
         ResponseCookie aCookie = ResponseCookie
             .from("access_token", newAccess)
             .httpOnly(true)
             .secure(true)
-            .domain(".groow.store")
+            .domain(domain)
             .path("/")
             .maxAge(accessMaxAge)
             .sameSite("None")
@@ -157,7 +158,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<Config> {
             .from("refresh_token", newRefresh)
             .httpOnly(true)
             .secure(true)
-            .domain(".groow.store")
+            .domain(domain)
             .path("/")
             .maxAge(refreshMaxAge)
             .sameSite("None")
