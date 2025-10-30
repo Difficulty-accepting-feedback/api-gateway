@@ -12,17 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      redis:
-        image: redis:6
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       # 코드 체크아웃
       - uses: actions/checkout@v3
@@ -57,7 +46,7 @@ jobs:
 
       # Gradle 빌드 실행
       - name: Build with Gradle
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean build
 
       # 이미지를 만들고 DockerHub 에 Push
       - name: Login to DockerHub
@@ -67,11 +56,11 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker
-        run: docker build --platform linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/grow-api-gateway:${{ github.sha }} -t ${{ secrets.DOCKERHUB_USERNAME }}/grow-api-gateway:latest .
+        run: docker build --platform linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/grow-gateway-server:${{ github.sha }} -t ${{ secrets.DOCKERHUB_USERNAME }}/grow-gateway-server:latest .
       - name: Push Docker
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/grow-api-gateway:${{ github.sha }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/grow-api-gateway:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/grow-gateway-server:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/grow-gateway-server:latest
 
       # GitOps manifests 레포 체크아웃 (별도 레포이므로 PAT 사용)
       - name: Checkout manifests repo
@@ -97,7 +86,7 @@ jobs:
             exit 1
           fi
           cat kustomization.yaml
-          kustomize edit set image ${{ secrets.DOCKERHUB_USERNAME }}/grow-api-gateway=${{ secrets.DOCKERHUB_USERNAME }}/grow-api-gateway:${{ github.sha }}
+          kustomize edit set image ${{ secrets.DOCKERHUB_USERNAME }}/grow-gateway-server=${{ secrets.DOCKERHUB_USERNAME }}/grow-gateway-server:${{ github.sha }}
           cat kustomization.yaml
         working-directory: ${{ github.workspace }}
 
@@ -111,7 +100,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "📝 update: image tag 변경 - ${{ github.sha }} for grow-api-gateway"
+            git commit -m "📝 update: image tag 변경 - ${{ github.sha }} for grow-gateway-server"
             git push origin main
           fi
         working-directory: ${{ github.workspace }}
