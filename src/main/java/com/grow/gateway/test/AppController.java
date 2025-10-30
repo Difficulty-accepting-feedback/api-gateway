@@ -18,6 +18,6 @@ public class AppController {
 
     @GetMapping("/")
     public String test() {
-        return "Hello, " + appName + " (" + serverPort + ") in " + activeProfile + " profile.";
+        return "Hello, " + appName + " (" + serverPort + ") in " + activeProfile + " profile. Version: 2";
     }
 }
